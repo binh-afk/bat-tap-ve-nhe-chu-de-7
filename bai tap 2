@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void printOptimalParens(vector<vector<int>>& split, int i, int j) {
+    if (i == j) {
+        cout << "A" << i;
+        return;
+    }
+    cout << "(";
+    printOptimalParens(split, i, split[i][j]);
+    cout << " x ";
+    printOptimalParens(split, split[i][j] + 1, j);
+    cout << ")";
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    // Input format example:
+    // n
+    // p0 p1 ... pn
+    if (!(cin >> n)) return 0;
+    vector<long long> p(n + 1);
+    for (int i = 0; i <= n; ++i) cin >> p[i];
+
+    const unsigned long long INF = (unsigned long long)4e18;
+    vector<vector<unsigned long long>> m(n + 1, vector<unsigned long long>(n + 1, 0));
+    vector<vector<int>> split(n + 1, vector<int>(n + 1, 0));
+
+    for (int len = 2; len <= n; ++len) {
+        for (int i = 1; i <= n - len + 1; ++i) {
+            int j = i + len - 1;
+            m[i][j] = INF;
+            for (int k = i; k < j; ++k) {
+                unsigned long long cost = m[i][k] + m[k+1][j] + (unsigned long long)p[i-1] * p[k] * p[j];
+                if (cost < m[i][j]) {
+                    m[i][j] = cost;
+                    split[i][j] = k;
+                }
+            }
+        }
+    }
+
+    cout << "Minimum number of multiplications: " << m[1][n] << "\n";
+    cout << "Optimal parenthesization: ";
+    printOptimalParens(split, 1, n);
+    cout << "\n";
+    return 0;
+}
