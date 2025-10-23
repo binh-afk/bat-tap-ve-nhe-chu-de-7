@@ -1,0 +1,27 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n; long long S;
+    // Input format example:
+    // n S
+    // c1 c2 ... cn
+    if (!(cin >> n >> S)) return 0;
+    vector<int> coins(n);
+    for (int i = 0; i < n; ++i) cin >> coins[i];
+
+    vector<unsigned long long> dp(S + 1, 0);
+    dp[0] = 1; // 1 cách đổi 0
+
+    for (int c : coins) {
+        for (long long j = c; j <= S; ++j) {
+            dp[j] += dp[j - c];
+        }
+    }
+
+    cout << dp[S] << "\n";
+    return 0;
+}
